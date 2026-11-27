@@ -533,7 +533,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   const INBOX = "https://ntfy.sh/radar-bf-cd4be03ef3";
   const RADAR_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzYOxPhA1z/7wfqanuJ0/j8m7H8Ud/bHhzG3etvJTPG+oOyswLQbHs9b2YivfZSwWhZz7fjil6g55bLNwxWCVtlf+9xlr5PNkWzI9pgS8CR0zQ31sKsrFRMyIm/k8c3ApPhWXlzOH2Io4G7jHq+HcrWRD41nPqBR72SEL1gosmcguvLUW1pMfzPK8tnU7+Zl7URtAc7aW9/KAILmy4IrfTQvo06NKwX7pov49AE5iJU3sj/whMdV4QJzy0VmfVAKY/F086c9wBmY3tt7w4Aa3/tB5sfkeaKOKZ6DMTuVn2vAzyNd+i97Xe9E/lhzE28oDCeoDfJcdAPHU6H3bzPhQ3QIDAQAB";
   const POLL_MS = 60000;
-  const SITE_VERSION = 14; // when dados.json says a newer version is out, the page reloads itself
+  const SITE_VERSION = 15; // when dados.json says a newer version is out, the page reloads itself
   const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
   const END = new Date("2026-11-27T23:59:59-03:00");
   const START = new Date("2026-11-27T00:00:00-03:00");
@@ -809,7 +809,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
       if (fl.frete === "ate" && typeof fl.freteMax === "number") chips.appendChild(el("span", null, "frete até " + lim(fl.freteMax)));
       if (chips.children.length) body.appendChild(chips);
       const pe = pendingEdit(p.id);
-      if (pe) card.appendChild(el("div", "pending-edit", pe.tipo === "remover" ? "Você pediu para parar de procurar. Sai da lista na próxima varredura." : "Mudança enviada. Vale a partir da próxima varredura (até 5 min)."));
+      if (pe) card.appendChild(el("div", "pending-edit", pe.tipo === "remover" ? "Você pediu para parar de procurar." : "Mudança enviada. O radar aplica em segundos, até nesta varredura."));
       const st = el("div", "status"); st.appendChild(el("span", "dot")); st.append(hit ? (typeof p.limite === "number" ? "Dentro do limite!" : "Menor preço achado") : "Procurando…"); body.appendChild(st);
       const nowBest = bestPrice(hit ? o : ((mine && mine.maisBarato) || {})[p.id], p);
       const th = thermo(p, nowBest); if (th) body.appendChild(th);
@@ -881,7 +881,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
       xb.onclick = async () => {
         if (!xb.classList.contains("armed")) { xb.classList.add("armed"); xb.textContent = "Toque de novo para excluir"; clearTimeout(xb.t); xb.t = setTimeout(() => { xb.classList.remove("armed"); xb.textContent = "🗑 Excluir"; }, 4000); return; }
         xb.disabled = true; xb.textContent = "Excluindo…";
-        try { await sendToRadar({ tipo: "remover", produto: p.id }); markEdit(p.id, "remover"); renderCards(); toast("Pronto. O produto sai da lista na próxima varredura."); }
+        try { await sendToRadar({ tipo: "remover", produto: p.id }); markEdit(p.id, "remover"); renderCards(); toast("Pronto. O produto saiu da sua lista."); }
         catch (er) { xb.disabled = false; xb.classList.remove("armed"); xb.textContent = "🗑 Excluir"; toast("Não deu para excluir agora. Confira a internet."); }
       };
       acts.appendChild(eb); acts.appendChild(xb);
@@ -1138,7 +1138,8 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     const all = ls.get("radar-edicoes", {}) || {};
     const e = all[session && session.id + ":" + id];
     if (!e) return null;
-    const applied = mine && mine.atualizadoEm && new Date(mine.atualizadoEm).getTime() > e.em + 15000;
+    const ap = mine && mine.aplicados && mine.aplicados[id];
+    const applied = (ap && new Date(ap).getTime() >= e.em - 3000) || (mine && mine.atualizadoEm && new Date(mine.atualizadoEm).getTime() > e.em + 15000);
     if (applied || Date.now() - e.em > 36e5) { delete all[session.id + ":" + id]; ls.set("radar-edicoes", all); return null; }
     return e;
   }
@@ -1187,7 +1188,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
       const parcelamento = formas.includes("credito") ? (pick("eparc") || "com-juros") : null;
       await sendToRadar({ tipo: "editar", produto: editing.id, limite, formas, parcelamento, pagamento: legacyPay(formas), semJuros: parcelamento === "sem-juros", frete, freteMax, cep: cepRaw ? cepRaw.slice(0, 5) + "-" + cepRaw.slice(5) : null, obs: $("eObs").value.trim() });
       markEdit(editing.id, "editar");
-      closeEdit(); renderCards(); toast("Salvo! Vale a partir da próxima varredura.");
+      closeEdit(); renderCards(); toast("Salvo! O radar aplica em segundos.");
     } catch (er) { fail("Não deu para salvar agora. Confira a internet."); }
     btn.disabled = false; btn.textContent = "Salvar";
   });
@@ -1196,7 +1197,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     if (!editing) return;
     if (!rm.classList.contains("armed")) { rm.classList.add("armed"); rm.textContent = "Toque de novo para confirmar"; return; }
     rm.disabled = true;
-    try { await sendToRadar({ tipo: "remover", produto: editing.id }); markEdit(editing.id, "remover"); closeEdit(); renderCards(); toast("Pedido enviado. O produto sai na próxima varredura."); }
+    try { await sendToRadar({ tipo: "remover", produto: editing.id }); markEdit(editing.id, "remover"); closeEdit(); renderCards(); toast("Pronto. O produto saiu da sua lista."); }
     catch (er) { $("editErr").textContent = "Não deu para enviar agora. Confira a internet."; $("editErr").hidden = false; }
     rm.disabled = false;
   };
