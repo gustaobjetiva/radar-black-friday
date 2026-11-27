@@ -138,6 +138,17 @@ dl.facts dd { margin: 0; overflow-wrap: anywhere; }
 .danger.armed { background: var(--hot); color: #fff; }
 .seg.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .hint-sm { font-size: 12px; color: var(--muted); margin-top: 2px; }
+details.alerts { background: var(--panel); border: 1px solid var(--tag); border-radius: 16px; padding: 0 14px; }
+details.alerts > summary { list-style: none; cursor: pointer; min-height: 50px; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
+details.alerts > summary::-webkit-details-marker { display: none; }
+details.alerts > summary span { font-weight: 600; font-size: 12px; color: var(--ok); margin-left: auto; }
+details.alerts[open] { padding-bottom: 12px; }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 12px; font-size: 14px; }
+.steps li { padding-left: 2px; }
+.steps .code-row { margin-top: 6px; }
+.steps .btn { margin-top: 6px; }
+.stores { display: flex; gap: 8px; margin-top: 6px; }
+.stores a { text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; background: var(--panel-2); }
 details.more { border: 1px solid var(--line); border-radius: 14px; padding: 0 12px; margin-bottom: 14px; }
 details.more > summary { list-style: none; cursor: pointer; min-height: 50px; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
 details.more > summary::-webkit-details-marker { display: none; }
@@ -316,6 +327,17 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
       <p><b>Guarde este link.</b> Ele é só seu: quem tiver o link vê os seus produtos. No celular, use "Adicionar à tela inicial".</p>
       <button class="btn" id="shareBtn" type="button">Copiar meu link</button>
     </div>
+    <details class="alerts" id="alerts" hidden>
+      <summary>🔔 Receber avisos no celular <span id="alertsState"></span></summary>
+      <ol class="steps">
+        <li>Instale o app grátis <b>ntfy</b>:
+          <span class="stores"><a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener noreferrer">Android</a><a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener noreferrer">iPhone</a></span></li>
+        <li>No app, toque em <b>＋</b> e cole o código do seu canal (deixe o servidor padrão, ntfy.sh):
+          <span class="code-row"><span class="code" id="alertsTopic"></span><button class="copy" type="button" id="alertsCopy">Copiar</button></span></li>
+        <li>Volte aqui e toque no botão para testar: <button class="btn" type="button" id="alertsTest">Mandar aviso de teste</button></li>
+      </ol>
+      <p class="hint-sm">O código é secreto e só seu. O radar avisa quando achar oferta dentro do seu limite ou quando tiver uma pergunta sobre o seu pedido.</p>
+    </details>
   </div>
 </section>
 
@@ -489,7 +511,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   const INBOX = "https://ntfy.sh/radar-bf-cd4be03ef3";
   const RADAR_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzYOxPhA1z/7wfqanuJ0/j8m7H8Ud/bHhzG3etvJTPG+oOyswLQbHs9b2YivfZSwWhZz7fjil6g55bLNwxWCVtlf+9xlr5PNkWzI9pgS8CR0zQ31sKsrFRMyIm/k8c3ApPhWXlzOH2Io4G7jHq+HcrWRD41nPqBR72SEL1gosmcguvLUW1pMfzPK8tnU7+Zl7URtAc7aW9/KAILmy4IrfTQvo06NKwX7pov49AE5iJU3sj/whMdV4QJzy0VmfVAKY/F086c9wBmY3tt7w4Aa3/tB5sfkeaKOKZ6DMTuVn2vAzyNd+i97Xe9E/lhzE28oDCeoDfJcdAPHU6H3bzPhQ3QIDAQAB";
   const POLL_MS = 60000;
-  const SITE_VERSION = 7; // when dados.json says a newer version is out, the page reloads itself
+  const SITE_VERSION = 8; // when dados.json says a newer version is out, the page reloads itself
   const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
   const END = new Date("2026-11-27T23:59:59-03:00");
   const START = new Date("2026-11-27T00:00:00-03:00");
@@ -611,7 +633,32 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     else if (mineState === "pending") { hc.className = "pill"; hc.textContent = "criando seu radar…"; hc.hidden = false; }
     else hc.hidden = true;
     $("savebox").hidden = !(ls.get("radar-mostrar-salvar", true));
+    const topic = mine && mine.pessoa && typeof mine.pessoa.avisos === "string" && /^rbf-[a-f0-9]{20}$/.test(mine.pessoa.avisos) ? mine.pessoa.avisos : null;
+    $("alerts").hidden = !topic;
+    if (topic) {
+      $("alertsTopic").textContent = topic;
+      const ok = ls.get("radar-avisos-ok", "") === topic;
+      $("alertsState").textContent = ok ? "ativado ✓" : "";
+      if (!ok && !renderHello.opened) { $("alerts").open = true; renderHello.opened = true; }
+    }
   }
+  $("alertsCopy").addEventListener("click", async () => {
+    const t = $("alertsTopic").textContent;
+    try { await navigator.clipboard.writeText(t); toast("Código copiado. Cole no app ntfy."); }
+    catch (e) { const r = document.createRange(); r.selectNodeContents($("alertsTopic")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Código selecionado. Copie pelo menu."); }
+  });
+  $("alertsTest").addEventListener("click", async () => {
+    const topic = $("alertsTopic").textContent;
+    if (!topic) return;
+    const b = $("alertsTest"); b.disabled = true;
+    try {
+      const r = await fetch("https://ntfy.sh/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic, title: "Radar Black Friday", message: "Teste: os avisos estão funcionando ✅", tags: ["satellite_antenna"] }) });
+      if (!r.ok) throw new Error();
+      ls.set("radar-avisos-ok", topic); renderHello();
+      toast("Aviso enviado. Chegou no celular? Então está pronto!");
+    } catch (e) { toast("Não deu para enviar o teste. Confira a internet."); }
+    b.disabled = false;
+  });
 
   const histOf = id => { const h = ((mine && mine.historico) || {})[id]; return Array.isArray(h) ? h.filter(x => x && typeof x.em === "string" && (typeof x.total === "number" || typeof x.pix === "number")).sort((a, b) => a.em < b.em ? -1 : 1) : []; };
   const whenLabel = iso => { const d = new Date(iso); if (isNaN(d)) return ""; const o = { day: "2-digit", month: "2-digit", timeZone: "America/Sao_Paulo" }; return d.toLocaleDateString("pt-BR", o) === new Date().toLocaleDateString("pt-BR", o) ? hhmm(iso) : d.toLocaleDateString("pt-BR", o); };
