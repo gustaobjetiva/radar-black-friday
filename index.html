@@ -211,7 +211,7 @@ details.more[open] { padding-bottom: 4px; }
 .talk { overflow: hidden; min-width: 0; }
 .thread { overflow-x: hidden; min-width: 0; }
 .bubble { min-width: 0; word-break: break-word; max-width: 88%; padding: 9px 13px; border-radius: 16px; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; animation: rise .35s ease both; }
-.bubble.radar { align-self: flex-start; background: var(--panel-2); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.bubble.bot { align-self: flex-start; background: var(--panel-2); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
 .bubble.eu { align-self: flex-end; background: var(--me); color: #fff; border-bottom-right-radius: 4px; }
 .bubble.pending { opacity: .65; }
 .bubble .when { display: block; font-size: 10.5px; opacity: .7; margin-top: 3px; font-family: var(--f-mono); }
@@ -533,7 +533,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   const INBOX = "https://ntfy.sh/radar-bf-cd4be03ef3";
   const RADAR_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzYOxPhA1z/7wfqanuJ0/j8m7H8Ud/bHhzG3etvJTPG+oOyswLQbHs9b2YivfZSwWhZz7fjil6g55bLNwxWCVtlf+9xlr5PNkWzI9pgS8CR0zQ31sKsrFRMyIm/k8c3ApPhWXlzOH2Io4G7jHq+HcrWRD41nPqBR72SEL1gosmcguvLUW1pMfzPK8tnU7+Zl7URtAc7aW9/KAILmy4IrfTQvo06NKwX7pov49AE5iJU3sj/whMdV4QJzy0VmfVAKY/F086c9wBmY3tt7w4Aa3/tB5sfkeaKOKZ6DMTuVn2vAzyNd+i97Xe9E/lhzE28oDCeoDfJcdAPHU6H3bzPhQ3QIDAQAB";
   const POLL_MS = 60000;
-  const SITE_VERSION = 11; // when dados.json says a newer version is out, the page reloads itself
+  const SITE_VERSION = 12; // when dados.json says a newer version is out, the page reloads itself
   const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
   const END = new Date("2026-11-27T23:59:59-03:00");
   const START = new Date("2026-11-27T00:00:00-03:00");
@@ -909,7 +909,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     talk.hidden = !session || (!msgs.length && !pend.length);
     if (talk.hidden) return;
     const thread = $("thread"); thread.textContent = "";
-    for (const m of msgs.slice(-30)) { const b = el("div", "bubble " + (m.de === "radar" ? "radar" : "eu"), m.texto); const t = m.em && hhmm(m.em); if (t) b.appendChild(el("span", "when", t)); thread.appendChild(b); }
+    for (const m of msgs.slice(-30)) { const b = el("div", "bubble " + (m.de === "radar" ? "bot" : "eu"), m.texto); const t = m.em && hhmm(m.em); if (t) b.appendChild(el("span", "when", t)); thread.appendChild(b); }
     for (const m of pend) { const b = el("div", "bubble eu pending", m.texto); b.appendChild(el("span", "when", "enviando…")); thread.appendChild(b); }
     thread.scrollTop = thread.scrollHeight;
   }
