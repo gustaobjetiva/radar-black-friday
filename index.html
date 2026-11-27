@@ -123,6 +123,14 @@ dl.facts dd { margin: 0; overflow-wrap: anywhere; }
 .go:active { background: var(--tag); }
 .seen { grid-column: 1 / -1; font-size: 12px; color: var(--muted); text-align: center; margin-top: -4px; }
 .new-badge { position: absolute; top: 12px; right: -34px; transform: rotate(35deg); background: var(--hot); color: #fff; font-family: var(--f-mono); font-size: 11px; font-weight: 700; letter-spacing: .1em; padding: 3px 40px; }
+.cheap { grid-column: 1 / -1; display: grid; gap: 6px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 13.5px; }
+.cheap .lbl { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.cheap .row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.cheap .v { font-family: var(--f-mono); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.cheap .gap { color: var(--hot); font-weight: 600; font-size: 12.5px; }
+.cheap .meta2 { color: var(--muted); font-size: 12.5px; overflow-wrap: anywhere; }
+.cheap a.see { justify-self: start; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid var(--fg); border-radius: 999px; padding: 8px 14px; min-height: 42px; display: inline-flex; align-items: center; }
+.cheap a.see:active { background: var(--fg); color: var(--ink); }
 .ended { grid-column: 1 / -1; font-size: 13px; color: var(--hot); background: rgba(255,82,51,.08); border: 1px solid rgba(255,82,51,.35); border-radius: 10px; padding: 8px 10px; }
 .empty { color: var(--muted); padding: 24px 18px; text-align: center; border: 1px dashed var(--line); border-radius: 18px; }
 .chips { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -511,7 +519,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   const INBOX = "https://ntfy.sh/radar-bf-cd4be03ef3";
   const RADAR_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzYOxPhA1z/7wfqanuJ0/j8m7H8Ud/bHhzG3etvJTPG+oOyswLQbHs9b2YivfZSwWhZz7fjil6g55bLNwxWCVtlf+9xlr5PNkWzI9pgS8CR0zQ31sKsrFRMyIm/k8c3ApPhWXlzOH2Io4G7jHq+HcrWRD41nPqBR72SEL1gosmcguvLUW1pMfzPK8tnU7+Zl7URtAc7aW9/KAILmy4IrfTQvo06NKwX7pov49AE5iJU3sj/whMdV4QJzy0VmfVAKY/F086c9wBmY3tt7w4Aa3/tB5sfkeaKOKZ6DMTuVn2vAzyNd+i97Xe9E/lhzE28oDCeoDfJcdAPHU6H3bzPhQ3QIDAQAB";
   const POLL_MS = 60000;
-  const SITE_VERSION = 8; // when dados.json says a newer version is out, the page reloads itself
+  const SITE_VERSION = 9; // when dados.json says a newer version is out, the page reloads itself
   const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
   const END = new Date("2026-11-27T23:59:59-03:00");
   const START = new Date("2026-11-27T00:00:00-03:00");
@@ -780,6 +788,27 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
         const lastIn = histOf(p.id).filter(h => h.dentro).pop();
         if (lastIn && lastIn.fim) card.appendChild(el("div", "ended", "A promoção de " + money(typeof lastIn.total === "number" ? lastIn.total : lastIn.pix) + (lastIn.loja ? " na " + lastIn.loja : "") + " acabou" + (hhmm(lastIn.fim) ? " às " + hhmm(lastIn.fim) : "") + ". O radar segue procurando outra."));
         else body.appendChild(el("p", "searching", typeof p.limite === "number" ? "Nada abaixo de " + lim(p.limite) + " por enquanto." : "Procurando o menor preço…"));
+        // cheapest offer seen, even above the limit (only filled for the people who asked for it)
+        const mb = ((mine && mine.maisBarato) || {})[p.id];
+        if (mb && typeof mb === "object") {
+          const pr = { credito: mb.totalCredito, debito: mb.debito, pix: mb.pix };
+          const acc = formasOf(p).filter(f => typeof pr[f] === "number");
+          const f0 = acc.length ? acc.sort((a, b) => pr[a] - pr[b])[0] : ["credito", "pix", "debito"].find(f => typeof pr[f] === "number");
+          if (f0) {
+            const box = el("div", "cheap");
+            box.appendChild(el("div", "lbl", "Mais barato agora"));
+            const row = el("div", "row");
+            row.appendChild(el("span", "v", money(pr[f0])));
+            row.appendChild(el("span", null, f0 === "credito" ? "no crédito" + (mb.semJurosAte > 1 ? " · " + mb.semJurosAte + "x sem juros" : "") : f0 === "debito" ? "no débito" : "no Pix"));
+            if (typeof p.limite === "number" && pr[f0] > p.limite) row.appendChild(el("span", "gap", money(pr[f0] - p.limite) + " acima do limite"));
+            box.appendChild(row);
+            const info = [mb.modelo, mb.loja && mb.vendedor && mb.vendedor !== mb.loja ? mb.loja + " (vende: " + mb.vendedor + ")" : mb.loja, mb.nota, mb.vistoEm && hhmm(mb.vistoEm) ? "visto às " + hhmm(mb.vistoEm) : null].filter(Boolean).join(" · ");
+            if (info) box.appendChild(el("div", "meta2", info));
+            const href = safeLink(mb.link);
+            if (href) { const a = el("a", "see", "Ver oferta →"); a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer"; box.appendChild(a); }
+            card.appendChild(box);
+          }
+        }
       }
       const hb = renderHistory(p); if (hb) card.appendChild(hb);
       const acts = el("div", "actions");
