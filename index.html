@@ -131,6 +131,18 @@ dl.facts dd { margin: 0; overflow-wrap: anywhere; }
 .cheap .meta2 { color: var(--muted); font-size: 12.5px; overflow-wrap: anywhere; }
 .cheap a.see { justify-self: start; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid var(--fg); border-radius: 999px; padding: 8px 14px; min-height: 42px; display: inline-flex; align-items: center; }
 .cheap a.see:active { background: var(--fg); color: var(--ink); }
+.withcoupon { grid-column: 1 / -1; display: grid; gap: 4px; border: 1px dashed var(--tag); border-radius: 12px; padding: 9px 12px; background: rgba(255,178,26,.06); font-size: 13.5px; }
+.withcoupon .top2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.withcoupon .v { font-family: var(--f-mono); font-weight: 700; font-size: 1.15rem; color: var(--tag); font-variant-numeric: tabular-nums; }
+.withcoupon .code { font-size: 13px; padding: 3px 8px; }
+.withcoupon .note { font-size: 12px; color: var(--muted); }
+.withcoupon .fit { font-size: 12.5px; font-weight: 700; color: var(--ok); }
+.cheap .withcoupon { grid-column: auto; }
+.thermo { font-size: 12.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; align-self: start; }
+.thermo.good { color: var(--ok); border: 1px solid rgba(52,209,127,.5); }
+.thermo.wait { color: var(--tag); border: 1px solid rgba(255,178,26,.5); }
+.cheap.near { border-color: var(--tag); box-shadow: 0 0 0 1px var(--tag); }
+.cheap .nearchip { justify-self: start; font-size: 12px; font-weight: 800; letter-spacing: .04em; color: var(--tag-ink); background: var(--tag); border-radius: 999px; padding: 3px 10px; animation: blink 1.6s ease-in-out infinite; }
 .ended { grid-column: 1 / -1; font-size: 13px; color: var(--hot); background: rgba(255,82,51,.08); border: 1px solid rgba(255,82,51,.35); border-radius: 10px; padding: 8px 10px; }
 .empty { color: var(--muted); padding: 24px 18px; text-align: center; border: 1px dashed var(--line); border-radius: 18px; }
 .chips { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -519,7 +531,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   const INBOX = "https://ntfy.sh/radar-bf-cd4be03ef3";
   const RADAR_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzYOxPhA1z/7wfqanuJ0/j8m7H8Ud/bHhzG3etvJTPG+oOyswLQbHs9b2YivfZSwWhZz7fjil6g55bLNwxWCVtlf+9xlr5PNkWzI9pgS8CR0zQ31sKsrFRMyIm/k8c3ApPhWXlzOH2Io4G7jHq+HcrWRD41nPqBR72SEL1gosmcguvLUW1pMfzPK8tnU7+Zl7URtAc7aW9/KAILmy4IrfTQvo06NKwX7pov49AE5iJU3sj/whMdV4QJzy0VmfVAKY/F086c9wBmY3tt7w4Aa3/tB5sfkeaKOKZ6DMTuVn2vAzyNd+i97Xe9E/lhzE28oDCeoDfJcdAPHU6H3bzPhQ3QIDAQAB";
   const POLL_MS = 60000;
-  const SITE_VERSION = 9; // when dados.json says a newer version is out, the page reloads itself
+  const SITE_VERSION = 11; // when dados.json says a newer version is out, the page reloads itself
   const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
   const END = new Date("2026-11-27T23:59:59-03:00");
   const START = new Date("2026-11-27T00:00:00-03:00");
@@ -536,6 +548,45 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     return g === "pix" ? ["pix"] : (g === "credito-ou-pix" || g === "tanto-faz") ? ["credito", "pix"] : ["credito"];
   };
   const parcOf = p => (p && p.parcelamento === "a-vista") ? "sem-juros" : (p && ["sem-juros", "com-juros"].includes(p.parcelamento)) ? p.parcelamento : ((p && p.filtros && p.filtros.semJuros) ? "sem-juros" : "com-juros");
+  // lowest price in the accepted ways to pay (optionally with the coupon)
+  function bestPrice(o, p) {
+    if (!o) return null;
+    const vals = [];
+    const take = (src) => { if (!src) return; const pr = { credito: src.totalCredito, debito: src.debito, pix: src.pix }; for (const f of formasOf(p)) if (typeof pr[f] === "number") vals.push(pr[f]); };
+    take(o); take(o.comCupom);
+    return vals.length ? Math.min(...vals) : null;
+  }
+  // price thermometer: is today's best the lowest we have seen?
+  function thermo(p, nowBest) {
+    if (typeof nowBest !== "number") return null;
+    const h = histOf(p.id);
+    let low = null;
+    for (const x of h) { const v = hval(x, p); if (typeof v === "number" && (!low || v < low.v)) low = { v, x }; }
+    for (const r of (((mine && mine.referencias) || {})[p.id] || [])) if (r && typeof r.valor === "number" && (!low || r.valor < low.v)) low = { v: r.valor, ref: r };
+    if (!low) return null;
+    if (nowBest <= low.v + 0.5) return el("span", "thermo good", "🟢 Menor preço que o radar já viu");
+    const when = low.ref ? (low.ref.quando || low.ref.rotulo) : (whenLabel(low.x.em) + (low.x.loja ? ", " + low.x.loja : ""));
+    return el("span", "thermo wait", "🟡 Já esteve mais barato: " + money(low.v) + (when ? " (" + when + ")" : ""));
+  }
+  // "Com cupom" box: price after a store coupon, in the cheapest accepted way to pay
+  function couponBox(cc, p) {
+    if (!cc || typeof cc !== "object" || typeof cc.codigo !== "string") return null;
+    const pr = { credito: cc.totalCredito, debito: cc.debito, pix: cc.pix };
+    const acc = formasOf(p).filter(f => typeof pr[f] === "number");
+    const f0 = acc.length ? acc.sort((a, b) => pr[a] - pr[b])[0] : ["credito", "pix", "debito"].find(f => typeof pr[f] === "number");
+    if (!f0) return null;
+    const box = el("div", "withcoupon");
+    const top = el("div", "top2");
+    top.append("Com cupom ");
+    top.appendChild(el("span", "code", cc.codigo));
+    top.appendChild(el("span", "v", money(pr[f0])));
+    top.append(f0 === "credito" ? "no crédito" : f0 === "debito" ? "no débito" : "no Pix");
+    box.appendChild(top);
+    if (typeof p.limite === "number" && pr[f0] <= p.limite) box.appendChild(el("div", "fit", "✓ Com o cupom fica dentro do seu limite"));
+    const n = [cc.desconto, cc.certeza === "confirmado" ? "cupom testado na página do produto" : "vale para itens selecionados: confira no carrinho se o desconto entra"].filter(Boolean).join(" · ");
+    box.appendChild(el("div", "note", n));
+    return box;
+  }
   const payLabel = p => { const f = formasOf(p).map(x => FORMA_NOME[x]); return "no " + (f.length > 1 ? f.slice(0, -1).join(", ") + " ou " + f[f.length - 1] : f[0]); };
   const STORES = [
     { id: "mercadolivre", name: "Mercado Livre", color: "var(--ml)" },
@@ -670,7 +721,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
 
   const histOf = id => { const h = ((mine && mine.historico) || {})[id]; return Array.isArray(h) ? h.filter(x => x && typeof x.em === "string" && (typeof x.total === "number" || typeof x.pix === "number")).sort((a, b) => a.em < b.em ? -1 : 1) : []; };
   const whenLabel = iso => { const d = new Date(iso); if (isNaN(d)) return ""; const o = { day: "2-digit", month: "2-digit", timeZone: "America/Sao_Paulo" }; return d.toLocaleDateString("pt-BR", o) === new Date().toLocaleDateString("pt-BR", o) ? hhmm(iso) : d.toLocaleDateString("pt-BR", o); };
-  const acceptsPix = p => p && (p.pagamento === "pix" || p.pagamento === "credito-ou-pix" || p.pagamento === "tanto-faz");
+  const acceptsPix = p => formasOf(p).includes("pix") || formasOf(p).includes("debito");
   const hval = (x, p) => { const t = typeof x.total === "number" ? x.total : null, q = typeof x.pix === "number" ? x.pix : null; if (p && p.pagamento === "pix" && q != null) return q; if (acceptsPix(p) && q != null) return t == null ? q : Math.min(t, q); return t != null ? t : q; };
   function sparkline(points, limit, p) {
     const W = 110, H = 30, P = 3, ns = "http://www.w3.org/2000/svg";
@@ -726,6 +777,8 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     if (mineState === "loading" && !mine) { grid.appendChild(el("div", "empty", "Abrindo o seu radar…")); return; }
     const prods = (mine && Array.isArray(mine.produtos)) ? mine.produtos.filter(p => p && typeof p.id === "string") : [];
     for (const p of prods) {
+      const pe0 = pendingEdit(p.id);
+      if (pe0 && pe0.tipo === "remover") continue; // removed by the viewer: hide at once, the radar confirms in the next round
       const o = (mine.ofertas || {})[p.id];
       const hit = isHit(o);
       const card = el("article", "card" + (hit ? " hit" : ""));
@@ -755,6 +808,8 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
       const pe = pendingEdit(p.id);
       if (pe) card.appendChild(el("div", "pending-edit", pe.tipo === "remover" ? "Você pediu para parar de procurar. Sai da lista na próxima varredura." : "Mudança enviada. Vale a partir da próxima varredura (até 5 min)."));
       const st = el("div", "status"); st.appendChild(el("span", "dot")); st.append(hit ? (typeof p.limite === "number" ? "Dentro do limite!" : "Menor preço achado") : "Procurando…"); body.appendChild(st);
+      const nowBest = bestPrice(hit ? o : ((mine && mine.maisBarato) || {})[p.id], p);
+      const th = thermo(p, nowBest); if (th) body.appendChild(th);
       card.appendChild(body);
       if (hit) {
         // show the price that is inside the limit: credit when it fits, otherwise Pix
@@ -776,9 +831,10 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
         add("Modelo", o.modelo);
         add("Loja", o.loja && o.vendedor && o.vendedor !== o.loja ? o.loja + " (vende: " + o.vendedor + ")" : (o.loja || o.vendedor));
         for (const f of ["credito", "debito", "pix"]) if (f !== best.f && typeof prices[f] === "number") add(f === "credito" ? "No crédito" : f === "debito" ? "No débito" : "No Pix", money(prices[f]));
-        add("Cupom", o.cupom);
+        if (!(o.comCupom && o.comCupom.codigo)) add("Cupom", o.cupom);
         add("Frete", o.frete || "não verificado");
         card.appendChild(dl);
+        const cbx = couponBox(o.comCupom, p); if (cbx) card.appendChild(cbx);
         const href = safeLink(o.link);
         if (href) { const a = el("a", "go", "Ir à loja →"); a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer"; card.appendChild(a); }
         const t = o.vistoEm && hhmm(o.vistoEm); if (t) card.appendChild(el("div", "seen", "Visto às " + t));
@@ -796,6 +852,9 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
           const f0 = acc.length ? acc.sort((a, b) => pr[a] - pr[b])[0] : ["credito", "pix", "debito"].find(f => typeof pr[f] === "number");
           if (f0) {
             const box = el("div", "cheap");
+            const bestNow = bestPrice(mb, p);
+            const near = typeof p.limite === "number" && typeof bestNow === "number" && bestNow > p.limite && bestNow <= p.limite * 1.05;
+            if (near) { box.classList.add("near"); box.appendChild(el("span", "nearchip", "QUASE LÁ · " + money(bestNow - p.limite) + " acima")); }
             box.appendChild(el("div", "lbl", "Mais barato agora"));
             const row = el("div", "row");
             row.appendChild(el("span", "v", money(pr[f0])));
@@ -804,6 +863,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
             box.appendChild(row);
             const info = [mb.modelo, mb.loja && mb.vendedor && mb.vendedor !== mb.loja ? mb.loja + " (vende: " + mb.vendedor + ")" : mb.loja, mb.nota, mb.vistoEm && hhmm(mb.vistoEm) ? "visto às " + hhmm(mb.vistoEm) : null].filter(Boolean).join(" · ");
             if (info) box.appendChild(el("div", "meta2", info));
+            const cbx2 = couponBox(mb.comCupom, p); if (cbx2) box.appendChild(cbx2);
             const href = safeLink(mb.link);
             if (href) { const a = el("a", "see", "Ver oferta →"); a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer"; box.appendChild(a); }
             card.appendChild(box);
