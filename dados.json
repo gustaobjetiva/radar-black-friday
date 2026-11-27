@@ -1,8 +1,8 @@
 {
   "versaoSite": 8,
-  "atualizadoEm": "2026-11-27T14:15:19Z",
-  "ultimaRodada": "2026-11-27T14:12:42Z",
-  "rodadas": 15,
+  "atualizadoEm": "2026-11-27T14:21:25Z",
+  "ultimaRodada": "2026-11-27T14:21:24Z",
+  "rodadas": 16,
   "cupons": {
     "mercadolivre": [
       {
@@ -11,7 +11,7 @@
         "regra": "Sem valor mínimo, pode valer só para itens selecionados",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/mercado-livre",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "PRECINHOBLACK",
@@ -19,7 +19,7 @@
         "regra": "Compras acima de R$ 1.999 em selecionados (smart TVs, geladeiras, notebooks)",
         "fonte": "https://seletronic.com.br/cupom-mercado-livre-2-novos-descontos-20-e-300-off-black-friday/",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "CUIDADOML",
@@ -27,7 +27,7 @@
         "regra": "Saúde, produtos selecionados, válido até 27/11",
         "fonte": "https://www.promobit.com.br/oferta/cupom-mercado-livre-20-off-acima-de-r-79-ate-r-50-em-selecionados-3265579/",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "HORABLACK",
@@ -35,7 +35,7 @@
         "regra": "Compras a partir de R$ 79, produtos elegíveis — Pelando marca como expirada",
         "fonte": "https://www.mktesportivo.com/2026/11/comecou-a-black-friday-cupom-mercado-livre-garante-ate-r-100-de-desconto/",
         "status": "expirado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "BAIXOU",
@@ -43,7 +43,7 @@
         "regra": "Acima de R$ 79",
         "fonte": "https://www.spacemoney.com.br/educacao-financeira/dicas/cupom-mercado-livre-20-black-friday/",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "VIPTECH",
@@ -51,7 +51,7 @@
         "regra": "Tecnologia acima de R$ 599",
         "fonte": "https://seletronic.com.br/cupom-mercado-livre-2-novos-descontos-12-off-black-friday/",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "SOHOJEBF",
@@ -59,7 +59,7 @@
         "regra": "A partir de R$ 199",
         "fonte": "https://www.melhorescartoes.com.br/cupom-mercado-livre-black-friday-2026.html",
         "status": "esgotado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "CUPOMDOML30",
@@ -67,7 +67,7 @@
         "regra": "Produtos selecionados, válido até 20/12/2026",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/mercado-livre",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       }
     ],
     "amazon": [
@@ -77,7 +77,7 @@
         "regra": "Acima de R$ 999; não vale para PlayStation, livros e devices",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/amazon",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "BLACKEOS",
@@ -85,7 +85,7 @@
         "regra": "Prime, acima de R$ 700",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/amazon",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "ELECTRO80BLK",
@@ -93,7 +93,7 @@
         "regra": "Só no app, a partir de R$ 700",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/amazon",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "25IMPERDIVEL",
@@ -101,7 +101,7 @@
         "regra": "Eletrônicos, Prime, vendido e entregue pela Amazon, até 30/11",
         "fonte": "https://antihype.com.br/c/negocios/cupom-amazon-black-friday-2026-como-usar-hoje/",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "25BF26PRIME",
@@ -109,7 +109,7 @@
         "regra": "Prime, selecionados vendidos pela Amazon, até 30/11",
         "fonte": "https://seletronic.com.br/amazon-cupom-25-off-desconto-ate-500-black-friday-2/",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "SONHODEBLACK",
@@ -117,7 +117,7 @@
         "regra": "Pedido mínimo de R$ 250",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/amazon",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "100OFF",
@@ -125,7 +125,7 @@
         "regra": "Primeira compra na Amazon",
         "fonte": "https://www.melhorescartoes.com.br/cupom-amazon-100-off-22jan26.html",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "BLACK25OFF",
@@ -133,7 +133,7 @@
         "regra": "Acima de R$ 159, expira hoje (27/11) às 11h30",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/amazon",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       }
     ],
     "shopee": [
@@ -143,7 +143,7 @@
         "regra": "Compras a partir de R$ 249",
         "fonte": "https://seletronic.com.br/cupom-shopee-novo-desconto-50-off-black-friday/",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "H0J3VAL3",
@@ -151,7 +151,7 @@
         "regra": "Compras a partir de R$ 60",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/shopee",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "MELIUZBF10PB",
@@ -159,7 +159,7 @@
         "regra": "Compras a partir de R$ 40",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/shopee",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "400FFN4SH0",
@@ -167,7 +167,7 @@
         "regra": "A partir de R$ 200",
         "fonte": "https://www.promobit.com.br/oferta/cupom-shopee-r-4000-off-em-r-20000-3265526/",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "TECHTUDOBF10PB",
@@ -175,7 +175,7 @@
         "regra": "Acima de R$ 40, 1 por CPF, enquanto durar",
         "fonte": "https://www.techtudo.com.br/guia/2026/11/cupom-da-shopee-na-black-friday-veja-o-codigo-e-como-usar-bf2026-edsoftwares.ghtml",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       },
       {
         "codigo": "CUP0MD04DM2026",
@@ -183,7 +183,7 @@
         "regra": "A partir de R$ 120 (fonte pouco confiável)",
         "fonte": "https://seletronic.com.br/shopee-super-cupom-50-off-a-partir-de-120-black-friday/",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:12:42Z"
+        "verificadoEm": "2026-11-27T14:21:24Z"
       }
     ]
   }
