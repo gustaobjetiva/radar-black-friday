@@ -320,12 +320,12 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   <div class="radar" aria-hidden="true"></div>
   <div class="wrap">
     <div>
-      <div class="eyebrow"><span class="live-dot"></span> Ao vivo · Black Friday 27/11</div>
+      <div class="eyebrow"><span class="live-dot"></span> Ao vivo · Black Friday até a Cyber Monday (30/11)</div>
       <h1>Radar de <em>ofertas</em></h1>
     </div>
     <div class="clocks">
       <div class="clock">
-        <div class="clock-label">Acaba em</div>
+        <div class="clock-label">Acaba em (até 30/11)</div>
         <div class="digits" id="endClock"></div>
         <div class="bar"><i id="dayBar"></i></div>
       </div>
@@ -533,9 +533,9 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   const INBOX = "https://ntfy.sh/radar-bf-cd4be03ef3";
   const RADAR_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzYOxPhA1z/7wfqanuJ0/j8m7H8Ud/bHhzG3etvJTPG+oOyswLQbHs9b2YivfZSwWhZz7fjil6g55bLNwxWCVtlf+9xlr5PNkWzI9pgS8CR0zQ31sKsrFRMyIm/k8c3ApPhWXlzOH2Io4G7jHq+HcrWRD41nPqBR72SEL1gosmcguvLUW1pMfzPK8tnU7+Zl7URtAc7aW9/KAILmy4IrfTQvo06NKwX7pov49AE5iJU3sj/whMdV4QJzy0VmfVAKY/F086c9wBmY3tt7w4Aa3/tB5sfkeaKOKZ6DMTuVn2vAzyNd+i97Xe9E/lhzE28oDCeoDfJcdAPHU6H3bzPhQ3QIDAQAB";
   const POLL_MS = 60000;
-  const SITE_VERSION = 16; // when dados.json says a newer version is out, the page reloads itself
+  const SITE_VERSION = 17; // when dados.json says a newer version is out, the page reloads itself
   const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-  const END = new Date("2026-11-27T23:59:59-03:00");
+  const END = new Date("2026-11-30T23:59:59-03:00"); // radar extended through Cyber Monday
   const START = new Date("2026-11-27T00:00:00-03:00");
   const STEP_MIN = 5;
 
@@ -720,8 +720,9 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     b.disabled = false;
   });
 
-  const BF_DAY = new Date("2026-11-27T12:00:00-03:00").toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
-  const isBlackFriday = iso => { const d = new Date(iso); return !isNaN(d) && d.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" }) === BF_DAY; };
+  // only today's prices (Brasília day): the organizer wants to know about today only
+  const dayOf = d => d.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
+  const isBlackFriday = iso => { const d = new Date(iso); return !isNaN(d) && dayOf(d) === dayOf(new Date()); };
   const histOf = id => { const h = ((mine && mine.historico) || {})[id]; return Array.isArray(h) ? h.filter(x => x && typeof x.em === "string" && isBlackFriday(x.em) && (typeof x.total === "number" || typeof x.pix === "number")).sort((a, b) => a.em < b.em ? -1 : 1) : []; };
   const whenLabel = iso => { const d = new Date(iso); if (isNaN(d)) return ""; const o = { day: "2-digit", month: "2-digit", timeZone: "America/Sao_Paulo" }; return d.toLocaleDateString("pt-BR", o) === new Date().toLocaleDateString("pt-BR", o) ? hhmm(iso) : d.toLocaleDateString("pt-BR", o); };
   const acceptsPix = p => formasOf(p).includes("pix") || formasOf(p).includes("debito");
@@ -972,7 +973,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     const left = ms > 0 ? Math.ceil((now.getTime() + 1) / stepMs) * stepMs - now.getTime() : 0;
     setDigits("nextClock", pad(Math.floor(left / 6e4)) + ":" + pad(Math.floor(left % 6e4 / 1e3)));
     const lr = $("lastRun");
-    if (ms <= 0) { lr.textContent = "Black Friday encerrada."; return; }
+    if (ms <= 0) { lr.textContent = "Radar encerrado (fim da Cyber Monday)."; return; }
     if (pub.ultimaRodada) { const d = new Date(pub.ultimaRodada); if (!isNaN(d)) { const ago = Math.round((now - d) / 6e4); lr.textContent = "Última às " + hhmm(pub.ultimaRodada) + (ago > 0 ? " (há " + ago + " min)" : ""); } }
   }
 
