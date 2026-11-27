@@ -533,7 +533,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
   const INBOX = "https://ntfy.sh/radar-bf-cd4be03ef3";
   const RADAR_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzYOxPhA1z/7wfqanuJ0/j8m7H8Ud/bHhzG3etvJTPG+oOyswLQbHs9b2YivfZSwWhZz7fjil6g55bLNwxWCVtlf+9xlr5PNkWzI9pgS8CR0zQ31sKsrFRMyIm/k8c3ApPhWXlzOH2Io4G7jHq+HcrWRD41nPqBR72SEL1gosmcguvLUW1pMfzPK8tnU7+Zl7URtAc7aW9/KAILmy4IrfTQvo06NKwX7pov49AE5iJU3sj/whMdV4QJzy0VmfVAKY/F086c9wBmY3tt7w4Aa3/tB5sfkeaKOKZ6DMTuVn2vAzyNd+i97Xe9E/lhzE28oDCeoDfJcdAPHU6H3bzPhQ3QIDAQAB";
   const POLL_MS = 60000;
-  const SITE_VERSION = 13; // when dados.json says a newer version is out, the page reloads itself
+  const SITE_VERSION = 14; // when dados.json says a newer version is out, the page reloads itself
   const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
   const END = new Date("2026-11-27T23:59:59-03:00");
   const START = new Date("2026-11-27T00:00:00-03:00");
@@ -563,7 +563,7 @@ canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-
     if (typeof nowBest !== "number") return null;
     const h = histOf(p.id);
     let low = null;
-    for (const x of h) { const v = hval(x, p); if (typeof v === "number" && (!low || v < low.v)) low = { v, x }; }
+    for (const x of h) { if (/n[ãa]o entrega/i.test(String(x.nota || ""))) continue; const v = hval(x, p); if (typeof v === "number" && (!low || v < low.v)) low = { v, x }; }
     if (!low) return null;
     if (nowBest <= low.v + 0.5) return el("span", "thermo good", "🟢 Menor preço de hoje");
     const when = low.ref ? (low.ref.quando || low.ref.rotulo) : (whenLabel(low.x.em) + (low.x.loja ? ", " + low.x.loja : ""));
