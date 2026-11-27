@@ -1,8 +1,8 @@
 {
   "versaoSite": 14,
-  "atualizadoEm": "2026-11-27T15:58:29Z",
-  "ultimaRodada": "2026-11-27T15:58:23Z",
-  "rodadas": 30,
+  "atualizadoEm": "2026-11-27T16:03:56Z",
+  "ultimaRodada": "2026-11-27T16:03:56Z",
+  "rodadas": 31,
   "cupons": {
     "mercadolivre": [
       {
@@ -10,32 +10,24 @@
         "desconto": "30% OFF até R$ 500",
         "regra": "Sem valor mínimo, pode valer só para itens selecionados",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/mercado-livre",
-        "status": "ativo",
-        "verificadoEm": "2026-11-27T14:30:13Z"
+        "status": "nao-confirmado",
+        "verificadoEm": "2026-11-27T16:03:56Z"
       },
       {
         "codigo": "PRECINHOBLACK",
         "desconto": "R$ 300 OFF",
         "regra": "Compras acima de R$ 1.999 em selecionados (smart TVs, geladeiras, notebooks)",
         "fonte": "https://seletronic.com.br/cupom-mercado-livre-2-novos-descontos-20-e-300-off-black-friday/",
-        "status": "ativo",
-        "verificadoEm": "2026-11-27T14:30:13Z"
+        "status": "nao-confirmado",
+        "verificadoEm": "2026-11-27T16:03:56Z"
       },
       {
         "codigo": "CUIDADOML",
         "desconto": "20% OFF até R$ 50",
         "regra": "Saúde, produtos selecionados, válido até 27/11",
         "fonte": "https://www.promobit.com.br/oferta/cupom-mercado-livre-20-off-acima-de-r-79-ate-r-50-em-selecionados-3265579/",
-        "status": "ativo",
-        "verificadoEm": "2026-11-27T14:30:13Z"
-      },
-      {
-        "codigo": "BAIXOU",
-        "desconto": "20% OFF até R$ 200",
-        "regra": "Acima de R$ 79",
-        "fonte": "https://www.spacemoney.com.br/educacao-financeira/dicas/cupom-mercado-livre-20-black-friday/",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:30:13Z"
+        "verificadoEm": "2026-11-27T16:03:56Z"
       },
       {
         "codigo": "VIPTECH",
@@ -43,7 +35,7 @@
         "regra": "Tecnologia acima de R$ 599",
         "fonte": "https://seletronic.com.br/cupom-mercado-livre-2-novos-descontos-12-off-black-friday/",
         "status": "nao-confirmado",
-        "verificadoEm": "2026-11-27T14:30:13Z"
+        "verificadoEm": "2026-11-27T16:03:56Z"
       },
       {
         "codigo": "CUPOMDOML30",
@@ -51,7 +43,31 @@
         "regra": "Produtos selecionados, válido até 20/12/2026",
         "fonte": "https://www.pelando.com.br/cupons-de-descontos/mercado-livre",
         "status": "ativo",
-        "verificadoEm": "2026-11-27T14:30:13Z"
+        "verificadoEm": "2026-11-27T16:03:56Z"
+      },
+      {
+        "codigo": "TSKMELI",
+        "desconto": "R$ 280 OFF",
+        "regra": "Acima de R$ 1.199, exclusivo Meli+, itens selecionados",
+        "fonte": "https://www.pelando.com.br/cupons-de-descontos/mercado-livre",
+        "status": "ativo",
+        "verificadoEm": "2026-11-27T16:03:56Z"
+      },
+      {
+        "codigo": "RELAMPAGO",
+        "desconto": "20% OFF até R$ 100",
+        "regra": "Acima de R$ 79, selecionados, só 27/11",
+        "fonte": "https://www.pelando.com.br/cupons-de-descontos/mercado-livre",
+        "status": "ativo",
+        "verificadoEm": "2026-11-27T16:03:56Z"
+      },
+      {
+        "codigo": "CONECTAML",
+        "desconto": "12% OFF até R$ 250",
+        "regra": "Tecnologia acima de R$ 1.499, selecionados, só 27/11",
+        "fonte": "https://www.pelando.com.br/cupons-de-descontos/mercado-livre",
+        "status": "ativo",
+        "verificadoEm": "2026-11-27T16:03:56Z"
       }
     ],
     "amazon": [
