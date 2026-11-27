@@ -33,7 +33,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html { background: var(--ink); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html { background: var(--ink); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-x: hidden; }
 body { margin: 0; background: var(--ink); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.5; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 body.lock { overflow: hidden; }
 [hidden] { display: none !important; }
@@ -208,7 +208,9 @@ details.more[open] { padding-bottom: 4px; }
 .talk h3 { font-family: var(--f-display); font-weight: 800; font-size: 1.15rem; margin: 0 0 2px; }
 .talk .hint { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
 .thread { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px; }
-.bubble { max-width: 88%; padding: 9px 13px; border-radius: 16px; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; animation: rise .35s ease both; }
+.talk { overflow: hidden; min-width: 0; }
+.thread { overflow-x: hidden; min-width: 0; }
+.bubble { min-width: 0; word-break: break-word; max-width: 88%; padding: 9px 13px; border-radius: 16px; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; animation: rise .35s ease both; }
 .bubble.radar { align-self: flex-start; background: var(--panel-2); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
 .bubble.eu { align-self: flex-end; background: var(--me); color: #fff; border-bottom-right-radius: 4px; }
 .bubble.pending { opacity: .65; }
